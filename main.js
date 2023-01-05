@@ -47,8 +47,8 @@ const clearButton = document.querySelector('#clear');
 const backButton = document.querySelector('#back');
 
 
-let firstNumber = 0;
-let secondNumber = 0;
+let firstNumber;
+let secondNumber;
 let operator = "";
 let displayValue = 0;
 
@@ -57,11 +57,19 @@ display.textContent = displayValue;
 
 function numberPressed(number) {
     if (operator === "") {
-        firstNumber = firstNumber * 10 + number;
+        if (firstNumber !== undefined) { //mar van erteke firstNumbernek
+            firstNumber = firstNumber * 10 + number;
+        } else { //még undefined
+            firstNumber = number;
+        }
         displayValue = firstNumber;
         display.textContent = displayValue;
     } else {
-        secondNumber = secondNumber * 10 + number;
+        if (secondNumber !== undefined) {
+            secondNumber = secondNumber * 10 + number;
+        } else {
+            secondNumber = number;
+        }
         displayValue = firstNumber;
         display.textContent = `${firstNumber}${operator}${secondNumber}`;
     }
@@ -109,9 +117,9 @@ nine.addEventListener('click', () => {
 })
 
 function operatorPresesed(p) {
-    if (operator !== "" && secondNumber === 0) {
+    if (operator !== "" && secondNumber === undefined) {
         displayValue = String(displayValue).slice(0, -1);
-    } else if (operator !== "" && secondNumber !== 0) {
+    } else if (operator !== "" && secondNumber !== undefined) {
         runOperate();
     }
     operator = p;
@@ -139,33 +147,33 @@ divideButton.addEventListener('click', () => {
 
 function runOperate() {
     if (operator === "/" && secondNumber === 0) { //zero divison
-        firstNumber = 0;
+        firstNumber = undefined;
         displayValue = "ZERO DIV ERROR";
     } else {
         displayValue = operate(operator, firstNumber, secondNumber);
         firstNumber = operate(operator, firstNumber, secondNumber);
     }
     display.textContent = displayValue;
-    secondNumber = 0;
+    secondNumber = undefined;
     operator = "";
 }
 
 clearButton.addEventListener('click', () => {
-    firstNumber = 0;
-    secondNumber = 0;
+    firstNumber = undefined;
+    secondNumber = undefined;
     operator = "";
     displayValue = 0;
     display.textContent = displayValue;
 })
 
 resultButton.addEventListener('click', () => {
-   if (firstNumber !== 0 && operator !== "" && secondNumber !== 0) {
+   if (firstNumber !== undefined && operator !== "" && secondNumber !== undefined) {
        runOperate();
    }
 });
 
 backButton.addEventListener('click', () => {
-    if (firstNumber !== 0 && operator !== "" && secondNumber !== 0) {
+    if (firstNumber !== undefined && operator !== "" && secondNumber !== undefined) {
         if (secondNumber >= 10) {
             secondNumber = Math.floor((secondNumber - (secondNumber % 10)) / 10);
             displayValue = `${firstNumber}${operator}${secondNumber}`
@@ -173,7 +181,7 @@ backButton.addEventListener('click', () => {
             secondNumber = 0;
             displayValue = `${firstNumber}${operator}`;
         }
-    } else if (firstNumber !== 0 && operator !== "" && secondNumber === 0) {
+    } else if (firstNumber !== undefined && operator !== "" && secondNumber === undefined) {
         operator = "";
         displayValue = firstNumber;
     } else {
